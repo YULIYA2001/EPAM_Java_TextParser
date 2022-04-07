@@ -5,7 +5,6 @@ import static com.golubovich.textparser.util.Constants.FILE_PATH;
 import com.golubovich.textparser.chain.of.responsibility.Parser;
 import com.golubovich.textparser.chain.of.responsibility.TextParser;
 import com.golubovich.textparser.composite.TextComponent;
-import com.golubovich.textparser.composite.TextComposite;
 import com.golubovich.textparser.text.processing.TextHandler;
 import com.golubovich.textparser.text.processing.TextHandlerImpl;
 import com.golubovich.textparser.util.Pair;

@@ -11,7 +11,7 @@ public enum TextComponentType {
   LETTER("");
 
 
-  private String end;
+  private final String end;
 
   TextComponentType(String end) {
     this.end = end;

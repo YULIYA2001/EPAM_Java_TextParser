@@ -28,7 +28,7 @@ public class TextComposite implements TextComponent {
 
     StringBuilder stringBuilder = new StringBuilder();
 
-    if (components.size() != 0) {
+    if (!components.isEmpty()) {
 
       if (componentType.equals(TextComponentType.TEXT)) {
         stringBuilder.append("    ");
