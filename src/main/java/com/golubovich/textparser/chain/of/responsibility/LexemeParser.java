@@ -24,76 +24,26 @@ public class LexemeParser implements Parser {
   public TextComponent parse(String lexemeData) {
 
     TextComponent lexemeComposite = new TextComposite(TextComponentType.LEXEME);
-    TextComponent symbolLeaf;
-    TextComponent wordComposite;
 
     if (lexemeData.matches(WORD_REGEX)) {
-      wordComposite = wordParser.parse(lexemeData);
-      lexemeComposite.add(wordComposite);
-
+      addWordToLexemeComposite(lexemeComposite, lexemeData);
     } else {
 
-      Pattern pattern = Pattern.compile(END_PUNCT_REGEX);
-      Matcher matcher = pattern.matcher(lexemeData);
-
       if (lexemeData.matches(PUNCT_REGEX + WORD_REGEX)) {
-
-        symbolLeaf = new SymbolLeaf(TextComponentType.SIGN, lexemeData.charAt(0));
-        lexemeComposite.add(symbolLeaf);
-        wordComposite = wordParser.parse(lexemeData.substring(1));
-        lexemeComposite.add(wordComposite);
-
+        addPunctToLexemeComposite(lexemeComposite, lexemeData.charAt(0));
+        addWordToLexemeComposite(lexemeComposite, lexemeData.substring(1));
       } else if (lexemeData.matches(WORD_REGEX + PUNCT_REGEX)) {
-
-        wordComposite = wordParser.parse(lexemeData.substring(0, lexemeData.length() - 1));
-        lexemeComposite.add(wordComposite);
-        symbolLeaf = new SymbolLeaf(TextComponentType.SIGN,
-            lexemeData.charAt(lexemeData.length() - 1));
-        lexemeComposite.add(symbolLeaf);
-
+        addWordToLexemeComposite(lexemeComposite, lexemeData.substring(0, lexemeData.length() - 1));
+        addPunctToLexemeComposite(lexemeComposite, lexemeData.charAt(lexemeData.length() - 1));
       } else if (lexemeData.matches(PUNCT_REGEX + WORD_REGEX + PUNCT_REGEX)) {
-
-        symbolLeaf = new SymbolLeaf(TextComponentType.SIGN, lexemeData.charAt(0));
-        lexemeComposite.add(symbolLeaf);
-        wordComposite = wordParser.parse(lexemeData.substring(1, lexemeData.length() - 1));
-        lexemeComposite.add(wordComposite);
-        symbolLeaf = new SymbolLeaf(TextComponentType.SIGN,
-            lexemeData.charAt(lexemeData.length() - 1));
-        lexemeComposite.add(symbolLeaf);
-
+        addPunctToLexemeComposite(lexemeComposite, lexemeData.charAt(0));
+        addWordToLexemeComposite(lexemeComposite, lexemeData.substring(1, lexemeData.length() - 1));
+        addPunctToLexemeComposite(lexemeComposite, lexemeData.charAt(lexemeData.length() - 1));
       } else if (lexemeData.matches(PUNCT_REGEX + WORD_REGEX + END_PUNCT_REGEX)) {
-
-        int endOfWord = 0;
-
-        if (matcher.find()) {
-          endOfWord = matcher.start();
-        }
-
-        symbolLeaf = new SymbolLeaf(TextComponentType.SIGN, lexemeData.charAt(0));
-        lexemeComposite.add(symbolLeaf);
-        wordComposite = wordParser.parse(lexemeData.substring(1, endOfWord));
-        lexemeComposite.add(wordComposite);
-
-        for (int i = endOfWord; i < lexemeData.length(); i++) {
-          symbolLeaf = new SymbolLeaf(TextComponentType.SIGN, lexemeData.charAt(i));
-          lexemeComposite.add(symbolLeaf);
-        }
-
+        addPunctToLexemeComposite(lexemeComposite, lexemeData.charAt(0));
+        addWordAndPuncts(lexemeComposite, lexemeData, 1, findEndOfWord(lexemeData));
       } else if (lexemeData.matches(WORD_REGEX + END_PUNCT_REGEX)) {
-        int endOfWord = 0;
-
-        if (matcher.find()) {
-          endOfWord = matcher.start();
-        }
-
-        wordComposite = wordParser.parse(lexemeData.substring(0, endOfWord));
-        lexemeComposite.add(wordComposite);
-
-        for (int i = endOfWord; i < lexemeData.length(); i++) {
-          symbolLeaf = new SymbolLeaf(TextComponentType.SIGN, lexemeData.charAt(i));
-          lexemeComposite.add(symbolLeaf);
-        }
-
+        addWordAndPuncts(lexemeComposite, lexemeData, 0, findEndOfWord(lexemeData));
       } else {
         // parse:  nick123   some.toString()
         TextComponent specialComposite = specialParser.parse(lexemeData);
@@ -102,5 +52,38 @@ public class LexemeParser implements Parser {
     }
 
     return lexemeComposite;
+  }
+
+  private void addWordAndPuncts(TextComponent lexemeComposite, String lexemeData,
+      int startOfWord, int endOfWord) {
+
+    addWordToLexemeComposite(lexemeComposite, lexemeData.substring(startOfWord, endOfWord));
+
+    for (int i = endOfWord; i < lexemeData.length(); i++) {
+      addPunctToLexemeComposite(lexemeComposite, lexemeData.charAt(i));
+    }
+  }
+
+  private int findEndOfWord(String lexemeString) {
+
+    Pattern pattern = Pattern.compile(END_PUNCT_REGEX);
+    Matcher matcher = pattern.matcher(lexemeString);
+    int endOfWord = 0;
+
+    if (matcher.find()) {
+      endOfWord = matcher.start();
+    }
+
+    return endOfWord;
+  }
+
+  private void addPunctToLexemeComposite(TextComponent lexemeComposite, char punctChar) {
+    TextComponent symbolLeaf = new SymbolLeaf(TextComponentType.SIGN, punctChar);
+    lexemeComposite.add(symbolLeaf);
+  }
+
+  private void addWordToLexemeComposite(TextComponent lexemeComposite, String wordString) {
+    TextComponent wordComposite = wordParser.parse(wordString);
+    lexemeComposite.add(wordComposite);
   }
 }
