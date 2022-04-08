@@ -7,13 +7,6 @@ public class SymbolLeaf implements TextComponent {
   private TextComponentType componentType;
   private char symbol;
 
-  public SymbolLeaf() {
-  }
-
-  public SymbolLeaf(TextComponentType type) {
-    this.componentType = type;
-  }
-
   public SymbolLeaf(TextComponentType type, char symbol) {
     this.componentType = type;
     this.symbol = symbol;

@@ -42,6 +42,9 @@ public class TextComposite implements TextComponent {
       if (componentType.equals(TextComponentType.PARAGRAPH)) {
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
       }
+      else if (componentType.equals(TextComponentType.TEXT)) {
+        return stringBuilder.substring(0, stringBuilder.length() - 6);
+      }
     }
     return stringBuilder.toString();
   }

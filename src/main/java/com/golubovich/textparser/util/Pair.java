@@ -2,8 +2,8 @@ package com.golubovich.textparser.util;
 
 public class Pair<U, V> {
 
-  private U first;
-  private V second;
+  private final U first;
+  private final V second;
 
   public Pair(U first, V second) {
 

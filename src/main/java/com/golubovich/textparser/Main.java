@@ -59,6 +59,9 @@ public class Main {
     System.out.println("\nModified text: ");
     System.out.println(textComposite.getString());
 
+
+    textComposite = textParser.parse(text);
+
     System.out.println("\nCount of same words in text:\n-----------------------------------");
     Map<String, Long> sameWords = textHandler.findSameWordsIgnoreRegister(textComposite);
     sameWords.entrySet().stream()
